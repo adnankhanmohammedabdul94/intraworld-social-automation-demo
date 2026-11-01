@@ -72,3 +72,30 @@ python main.py
 [Describe what happens when it runs, and show a sample output or post if helpful.]
 
 ## Project Structure
+social-media-automation/
+├── src/
+│ ├── platforms/ # Platform-specific integrations
+│ │ ├── twitter.py
+│ │ ├── instagram.py
+│ │ └── linkedin.py
+│ ├── scheduler.py # Post scheduling logic
+│ ├── content_generator.py # Content creation / templates
+│ └── utils.py # Helper functions
+├── config/
+│ ├── settings.yaml # App settings
+│ └── .env.example # Template for API keys
+├── data/
+│ └── posts.json # Queued or sample posts
+├── tests/ # Unit tests
+├── requirements.txt # Python dependencies
+├── main.py # Entry point
+└── README.md
+### Directory Overview
+
+| Path | Purpose |
+|------|---------|
+| `src/` | Core application code |
+| `src/platforms/` | One module per social platform's API |
+| `config/` | Configuration and environment templates |
+| `data/` | Content queues and sample data |
+| `tests/` | Automated tests |
