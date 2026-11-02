@@ -66,7 +66,16 @@ python demo.py --topic "Express Entry draw results"
 - Handoff from the research step to the posting step
 - Error handling and rate limits
 
-## Limitations and disclaimer
+## Project structure
+social-agent/
+├── agent/          # prompts, agent loop, planning logic
+├── tools/          # one file per platform + scheduler + analytics
+├── data/           # brand guidelines, example posts
+├── tests/          # evaluation cases
+├── config.py
+├── main.py
+├── .env
+└── requirements.txt
 
 - Canadian immigration rules, fees, draw results, and processing times change frequently. Verify all output against IRCC's official website before publishing.
 - Every post draft should include a "Last verified: [date]" line.
