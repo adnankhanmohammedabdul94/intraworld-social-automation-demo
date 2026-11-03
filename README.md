@@ -67,15 +67,23 @@ python demo.py --topic "Express Entry draw results"
 - Error handling and rate limits
 
 ## Project structure
-social-agent/
-├── agent/          # prompts, agent loop, planning logic
-├── tools/          # one file per platform + scheduler + analytics
-├── data/           # brand guidelines, example posts
-├── tests/          # evaluation cases
-├── config.py
-├── main.py
-├── .env
-└── requirements.txt
+intraworld-social-agent/
+├── .github/
+│   └── workflows/          # GitHub requires this exact path for Actions
+│       └── daily-content.yml
+├── scripts/
+│   └── make_content.py
+├── research/
+│   └── latest.json         # agent output (IRCC findings)
+├── content/
+│   ├── drafts/             # new items land here for review
+│   └── published/          # moved here after posting
+│       ├── 2026-09-15-express-entry-draw.json
+│       ├── 2026-09-29-study-permit-update.json
+│       └── 2026-10-13-pgwp-reminder.json
+├── brand/
+│   └── brand.json          # palette, wordmark, contact, disclaimer
+└── README.md
 
 - Canadian immigration rules, fees, draw results, and processing times change frequently. Verify all output against IRCC's official website before publishing.
 - Every post draft should include a "Last verified: [date]" line.
