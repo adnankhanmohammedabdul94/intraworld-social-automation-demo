@@ -1,1 +1,42 @@
+name: daily-content
 
+on:
+  schedule:
+    - cron: "30 3 * * 1-5"      # 03:30 UTC = 09:00 IST, weekdays
+  workflow_dispatch:             # manual "Run workflow" button
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  draft:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Research IRCC
+        run: python scripts/research_agent.py
+
+      - name: Build branded draft
+        run: python scripts/make_content.py research/latest.json
+
+      - name: Open PR for review
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: draft/${{ github.run_id }}
+          title: "Draft social content – ${{ github.run_started_at }}"
+          body: |
+            Auto-generated from an official IRCC page.
+            Please verify every fact against the source link before approving.
+          commit-message: "Add draft content"
+          add-paths: |
+            research/latest.json
+            content/drafts/*.json
