@@ -1,1 +1,142 @@
+#!/usr/bin/env python3
+"""
+make_content.py
+Turns the research agent's findings (research/latest.json, sourced from IRCC)
+into a brand-checked content.json for social posts.
 
+Usage:
+    python make_content.py research/latest.json
+    python make_content.py research/latest.json --out content/
+"""
+import argparse
+import json
+import re
+import sys
+from datetime import date
+from pathlib import Path
+from urllib.parse import urlparse
+
+# ---------- Brand rules ----------
+BRAND = {
+    "wordmark": "INTRAWORLD",
+    "colors": {
+        "navy":    "#0B1F3A",
+        "crimson": "#B3122E",
+        "gold":    "#C9A227",
+        "slate":   "#5B6770",
+    },
+    "contact": "Hannan",
+}
+DISCLAIMER = "General information only, not legal advice."
+FORBIDDEN_NAMES = ["noama"]            # never appear anywhere in output
+ALLOWED_SOURCE_DOMAINS = ("canada.ca",)  # IRCC publishes under canada.ca
+X_LIMIT = 280
+
+
+def slugify(text: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")[:50]
+
+
+def load_research(path: Path) -> dict:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    for key in ("topic", "source_url", "summary", "key_points"):
+        if key not in data:
+            sys.exit(f"research file missing required field: {key}")
+    return data
+
+
+def build_posts(r: dict) -> dict:
+    points = r["key_points"][:3]
+    bullets = "\n".join(f"• {p}" for p in points)
+    contact_line = f"Questions? Contact {BRAND['contact']} at {BRAND['wordmark']}."
+
+    linkedin = (
+        f"{r['topic']}\n\n{r['summary']}\n\n{bullets}\n\n"
+        f"Source: {r['source_url']}\n\n{contact_line}\n\n{DISCLAIMER}"
+    )
+    instagram = (
+        f"{r['topic']}\n\n{bullets}\n\n{contact_line}\n\n{DISCLAIMER}\n\n"
+        "#CanadaImmigration #IRCC #StudyInCanada #PR"
+    )
+    x_post = f"{r['topic']}: {points[0]}\n\n{r['source_url']}\n\n{DISCLAIMER}"
+
+    return {
+        "linkedin":  {"text": linkedin},
+        "instagram": {"text": instagram, "visual": visual_spec(r)},
+        "x":         {"text": x_post},
+    }
+
+
+def visual_spec(r: dict) -> dict:
+    c = BRAND["colors"]
+    return {
+        "background": c["navy"],
+        "headline_color": c["gold"],
+        "accent": c["crimson"],
+        "body_color": c["slate"],
+        "wordmark": BRAND["wordmark"],
+        "headline": r["topic"],
+    }
+
+
+def validate(content: dict) -> list[str]:
+    errors = []
+    blob = json.dumps(content, ensure_ascii=False).lower()
+
+    for name in FORBIDDEN_NAMES:
+        if name in blob:
+            errors.append(f"forbidden name found: {name}")
+
+    host = urlparse(content["source"]["url"]).netloc.lower()
+    if not host.endswith(ALLOWED_SOURCE_DOMAINS):
+        errors.append(f"source is not an official domain: {host}")
+
+    for platform, post in content["posts"].items():
+        if DISCLAIMER not in post["text"]:
+            errors.append(f"{platform}: disclaimer missing")
+    if len(content["posts"]["x"]["text"]) > X_LIMIT:
+        errors.append("x: post exceeds 280 characters")
+
+    allowed = {v.lower() for v in BRAND["colors"].values()}
+    for k, v in content["posts"]["instagram"]["visual"].items():
+        if isinstance(v, str) and v.startswith("#") and v.lower() not in allowed:
+            errors.append(f"off-brand color in visual.{k}: {v}")
+
+    if BRAND["contact"] not in content["posts"]["linkedin"]["text"]:
+        errors.append("linkedin: contact missing")
+    return errors
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("research", type=Path)
+    ap.add_argument("--out", type=Path, default=Path("content"))
+    args = ap.parse_args()
+
+    r = load_research(args.research)
+    content = {
+        "date": date.today().isoformat(),
+        "topic": r["topic"],
+        "source": {"name": "IRCC", "url": r["source_url"],
+                   "published": r.get("published")},
+        "brand": {"wordmark": BRAND["wordmark"],
+                  "palette": BRAND["colors"],
+                  "contact": BRAND["contact"]},
+        "disclaimer": DISCLAIMER,
+        "posts": build_posts(r),
+        "status": "draft",
+    }
+
+    errors = validate(content)
+    if errors:
+        print("Validation failed:\n - " + "\n - ".join(errors), file=sys.stderr)
+        sys.exit(1)
+
+    args.out.mkdir(parents=True, exist_ok=True)
+    out = args.out / f"{content['date']}-{slugify(r['topic'])}.json"
+    out.write_text(json.dumps(content, indent=2, ensure_ascii=False), encoding="utf-8")
+    print(f"Wrote {out}")
+
+
+if __name__ == "__main__":
+    main()
