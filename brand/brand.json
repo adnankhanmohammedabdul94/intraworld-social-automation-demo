@@ -1,1 +1,12 @@
-
+{
+  "wordmark": "INTRAWORLD",
+  "contact": "Hannan",
+  "disclaimer": "General information only, not legal advice.",
+  "palette": {
+    "navy": "#0B1F3A",
+    "crimson": "#B3122E",
+    "gold": "#C9A227",
+    "slate": "#5B6770"
+  },
+  "forbidden_names": ["noama"]
+}
