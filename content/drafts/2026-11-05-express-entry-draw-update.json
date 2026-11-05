@@ -1,0 +1,40 @@
+{
+  "date": "2026-11-05",
+  "topic": "Express Entry draw update",
+  "source": {
+    "name": "IRCC",
+    "url": "https://www.canada.ca/en/immigration-refugees-citizenship/corporate/mandate/policies-operational-instructions-agreements/ministerial-instructions/express-entry-rounds.html",
+    "published": "2026-11-05"
+  },
+  "brand": {
+    "wordmark": "INTRAWORLD",
+    "palette": {
+      "navy": "#0B1F3A",
+      "crimson": "#B3122E",
+      "gold": "#C9A227",
+      "slate": "#5B6770"
+    },
+    "contact": "Hannan"
+  },
+  "disclaimer": "General information only, not legal advice.",
+  "posts": {
+    "linkedin": {
+      "text": "Express Entry draw update\n\nIRCC has updated its express entry draw update page.\n\n• #: Each round has a unique number given to it. You can use this to look up detailed results of each round.\n• Date: The date the round was held.\n• General rounds of invitations: In general rounds of invitations, we invite top-ranking candidates in the pool.\n\nSource: https://www.canada.ca/en/immigration-refugees-citizenship/corporate/mandate/policies-operational-instructions-agreements/ministerial-instructions/express-entry-rounds.html\n\nQuestions? Contact Hannan at INTRAWORLD.\n\nGeneral information only, not legal advice."
+    },
+    "instagram": {
+      "text": "Express Entry draw update\n\n• #: Each round has a unique number given to it. You can use this to look up detailed results of each round.\n• Date: The date the round was held.\n• General rounds of invitations: In general rounds of invitations, we invite top-ranking candidates in the pool.\n\nQuestions? Contact Hannan at INTRAWORLD.\n\nGeneral information only, not legal advice.\n\n#CanadaImmigration #IRCC #StudyInCanada",
+      "visual": {
+        "background": "#0B1F3A",
+        "headline_color": "#C9A227",
+        "accent": "#B3122E",
+        "body_color": "#5B6770",
+        "wordmark": "INTRAWORLD",
+        "headline": "Express Entry draw update"
+      }
+    },
+    "x": {
+      "text": "Express Entry draw update: #: Each round has a unique number…\n\nhttps://www.canada.ca/en/immigration-refugees-citizenship/corporate/mandate/policies-operational-instructions-agreements/ministerial-instructions/express-entry-rounds.html\n\nGeneral information only, not legal advice."
+    }
+  },
+  "status": "draft"
+}
